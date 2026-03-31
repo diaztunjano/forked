@@ -40,6 +40,10 @@ class PuzzleEngine {
   }
 
   applyMove(from: string, to: string, promotion?: string): ApplyMoveResult {
+    if (this.moveIndex >= this.moves.length) {
+      return { valid: false, isComplete: false };
+    }
+
     const expected = parseUCI(this.moves[this.moveIndex]);
 
     if (from !== expected.from || to !== expected.to || (promotion ?? undefined) !== expected.promotion) {

@@ -8,6 +8,9 @@ export interface FSRSCardRow {
   fsrs_stability: number;
   fsrs_due_at: number;
   fsrs_state: number;
+  fsrs_reps: number;
+  fsrs_lapses: number;
+  fsrs_last_review_at: number | null;
 }
 
 const scheduler = fsrs();
@@ -41,6 +44,9 @@ export function serializeCard(card: Card): FSRSCardRow {
     fsrs_stability: card.stability,
     fsrs_due_at: Math.floor(card.due.getTime() / 1000),
     fsrs_state: card.state,
+    fsrs_reps: card.reps,
+    fsrs_lapses: card.lapses,
+    fsrs_last_review_at: card.last_review ? Math.floor(card.last_review.getTime() / 1000) : null,
   };
 }
 
@@ -52,5 +58,8 @@ export function deserializeCard(row: FSRSCardRow): Card {
     stability: row.fsrs_stability,
     due: new Date(row.fsrs_due_at * 1000),
     state: row.fsrs_state,
+    reps: row.fsrs_reps,
+    lapses: row.fsrs_lapses,
+    last_review: row.fsrs_last_review_at ? new Date(row.fsrs_last_review_at * 1000) : undefined,
   };
 }
