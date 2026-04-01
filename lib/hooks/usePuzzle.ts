@@ -39,6 +39,7 @@ interface UsePuzzleReturn {
   setupMove: UCIMove | null;
   correctMove: CorrectMove | null;
   eloDelta: number | null;
+  solveTimeMs: number | null;
   loadNextPuzzle: () => Promise<void>;
   submitMove: (from: string, to: string, promotion?: string) => void;
 }
@@ -52,6 +53,7 @@ export function usePuzzle(): UsePuzzleReturn {
   const [setupMove, setSetupMove] = useState<UCIMove | null>(null);
   const [correctMove, setCorrectMove] = useState<CorrectMove | null>(null);
   const [eloDelta, setEloDelta] = useState<number | null>(null);
+  const [solveTimeMs, setSolveTimeMs] = useState<number | null>(null);
 
   const engineRef = useRef<PuzzleEngine | null>(null);
   const solveStartTimeRef = useRef<number | null>(null);
@@ -98,6 +100,7 @@ export function usePuzzle(): UsePuzzleReturn {
     setPhase('loading');
     setCorrectMove(null);
     setEloDelta(null);
+    setSolveTimeMs(null);
     setSetupMove(null);
 
     if (!dbInitializedRef.current) {
@@ -147,8 +150,9 @@ export function usePuzzle(): UsePuzzleReturn {
           promotion: expected.promotion,
         });
       }
-      const solveTimeMs = solveStartTimeRef.current ? Date.now() - solveStartTimeRef.current : 0;
-      updateStatsOnResult(false, currentPuzzle, solveTimeMs);
+      const elapsed = solveStartTimeRef.current ? Date.now() - solveStartTimeRef.current : 0;
+      setSolveTimeMs(elapsed);
+      updateStatsOnResult(false, currentPuzzle, elapsed);
       return;
     }
 
@@ -156,8 +160,9 @@ export function usePuzzle(): UsePuzzleReturn {
 
     if (result.isComplete) {
       setPhase('success');
-      const solveTimeMs = solveStartTimeRef.current ? Date.now() - solveStartTimeRef.current : 0;
-      updateStatsOnResult(true, currentPuzzle, solveTimeMs);
+      const elapsed = solveStartTimeRef.current ? Date.now() - solveStartTimeRef.current : 0;
+      setSolveTimeMs(elapsed);
+      updateStatsOnResult(true, currentPuzzle, elapsed);
       return;
     }
 
@@ -179,6 +184,7 @@ export function usePuzzle(): UsePuzzleReturn {
     setupMove,
     correctMove,
     eloDelta,
+    solveTimeMs,
     loadNextPuzzle,
     submitMove,
   };

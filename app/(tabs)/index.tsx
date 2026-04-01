@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chess } from 'chess.js';
 
 import PuzzleBoard from '@/components/chess/PuzzleBoard';
+import PuzzleFeedback, { THEME_EXPLANATIONS } from '@/components/chess/PuzzleFeedback';
 import { usePuzzle } from '@/lib/hooks/usePuzzle';
 
 export default function PuzzleScreen() {
@@ -12,6 +13,9 @@ export default function PuzzleScreen() {
     phase,
     boardFen,
     setupMove,
+    correctMove,
+    eloDelta,
+    solveTimeMs,
     loadNextPuzzle,
     submitMove,
   } = usePuzzle();
@@ -46,6 +50,20 @@ export default function PuzzleScreen() {
     if (!puzzle?.themes) return [];
     return puzzle.themes.split(' ').filter(Boolean);
   }, [puzzle]);
+
+  // Derive theme explanation for feedback overlay
+  const themeExplanation = useMemo(() => {
+    for (const theme of themes) {
+      if (THEME_EXPLANATIONS[theme]) {
+        return THEME_EXPLANATIONS[theme];
+      }
+    }
+    return 'Good tactical awareness! Keep solving to sharpen your skills.';
+  }, [themes]);
+
+  const handleFeedbackDismiss = useCallback(() => {
+    loadNextPuzzle();
+  }, [loadNextPuzzle]);
 
   if (phase === 'loading') {
     return (
@@ -92,13 +110,24 @@ export default function PuzzleScreen() {
               ? 'Find the best move'
               : phase === 'opponent-reply'
                 ? 'Opponent is responding...'
-                : phase === 'success'
-                  ? 'Correct!'
-                  : phase === 'failure'
-                    ? 'Incorrect'
-                    : ''}
+                : ''}
         </Text>
       </View>
+
+      {/* Puzzle feedback overlay */}
+      {(phase === 'success' || phase === 'failure') && (
+        <PuzzleFeedback
+          success={phase === 'success'}
+          eloDelta={eloDelta ?? 0}
+          themeExplanation={themeExplanation}
+          solveTimeMs={solveTimeMs ?? 0}
+          puzzleRating={puzzle?.rating ?? 0}
+          streak={0}
+          onDismiss={handleFeedbackDismiss}
+          correctMove={phase === 'failure' ? correctMove : null}
+          flipped={playerColor === 'b'}
+        />
+      )}
     </SafeAreaView>
   );
 }
