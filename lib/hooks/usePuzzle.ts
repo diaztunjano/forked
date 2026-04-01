@@ -58,6 +58,7 @@ export function usePuzzle(): UsePuzzleReturn {
   const engineRef = useRef<PuzzleEngine | null>(null);
   const solveStartTimeRef = useRef<number | null>(null);
   const setupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const opponentReplyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dbInitializedRef = useRef(false);
 
   const updateStatsOnResult = useCallback(async (solved: boolean, currentPuzzle: Puzzle, solveTimeMs: number) => {
@@ -98,10 +99,14 @@ export function usePuzzle(): UsePuzzleReturn {
   }, []);
 
   const loadNextPuzzle = useCallback(async () => {
-    // Cancel any pending setup timer from a previous puzzle
+    // Cancel any pending timers from a previous puzzle
     if (setupTimerRef.current) {
       clearTimeout(setupTimerRef.current);
       setupTimerRef.current = null;
+    }
+    if (opponentReplyTimerRef.current) {
+      clearTimeout(opponentReplyTimerRef.current);
+      opponentReplyTimerRef.current = null;
     }
 
     setPhase('loading');
@@ -181,7 +186,8 @@ export function usePuzzle(): UsePuzzleReturn {
 
     // Multi-move puzzle: trigger opponent reply
     setPhase('opponent-reply');
-    setTimeout(() => {
+    opponentReplyTimerRef.current = setTimeout(() => {
+      opponentReplyTimerRef.current = null;
       const reply = engine.triggerOpponentReply();
       if (reply) {
         setBoardFen(engine.getBoardFen());

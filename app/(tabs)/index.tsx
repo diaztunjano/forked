@@ -83,7 +83,8 @@ export default function PuzzleScreen() {
       </View>
 
       {/* Board */}
-      <View style={styles.boardContainer} onLayout={(e) => setBoardTop(e.nativeEvent.layout.y)}>
+      <View style={styles.boardContainer}>
+        <View onLayout={(e) => setBoardTop(e.nativeEvent.layout.y)}>
         <PuzzleBoard
           boardFen={boardFen}
           onMove={submitMove}
@@ -92,6 +93,7 @@ export default function PuzzleScreen() {
           highlightLastMove={highlightLastMove}
           flipped={playerColor === 'b'}
         />
+        </View>
       </View>
 
       {/* Info row */}
