@@ -1,6 +1,6 @@
 import { Chess, type Square, type Color, type PieceSymbol } from 'chess.js';
 
-interface UCIMove {
+export interface UCIMove {
   from: string;
   to: string;
   promotion?: string;
@@ -86,6 +86,13 @@ class PuzzleEngine {
 
     this.moveIndex++;
     return uci;
+  }
+
+  getCurrentExpectedMove(): UCIMove | null {
+    if (this.moveIndex >= this.moves.length) {
+      return null;
+    }
+    return parseUCI(this.moves[this.moveIndex]);
   }
 
   isPlayerTurn(): boolean {
