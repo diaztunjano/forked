@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chess } from 'chess.js';
@@ -19,6 +19,8 @@ export default function PuzzleScreen() {
     loadNextPuzzle,
     submitMove,
   } = usePuzzle();
+
+  const [boardTop, setBoardTop] = useState(0);
 
   useEffect(() => {
     loadNextPuzzle();
@@ -81,7 +83,7 @@ export default function PuzzleScreen() {
       </View>
 
       {/* Board */}
-      <View style={styles.boardContainer}>
+      <View style={styles.boardContainer} onLayout={(e) => setBoardTop(e.nativeEvent.layout.y)}>
         <PuzzleBoard
           boardFen={boardFen}
           onMove={submitMove}
@@ -126,6 +128,7 @@ export default function PuzzleScreen() {
           onDismiss={handleFeedbackDismiss}
           correctMove={phase === 'failure' ? correctMove : null}
           flipped={playerColor === 'b'}
+          boardTop={boardTop}
         />
       )}
     </SafeAreaView>

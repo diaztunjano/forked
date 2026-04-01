@@ -65,6 +65,8 @@ export interface PuzzleFeedbackProps {
   correctMove?: { from: string; to: string } | null;
   /** Whether the board is flipped (player is black) */
   flipped?: boolean;
+  /** Y offset of the board from the top of the screen */
+  boardTop?: number;
 }
 
 /** Convert a square key (e.g. "e4") to the center pixel on the SVG board */
@@ -94,6 +96,7 @@ export default function PuzzleFeedback({
   onDismiss,
   correctMove,
   flipped = false,
+  boardTop = 0,
 }: PuzzleFeedbackProps) {
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -158,7 +161,7 @@ export default function PuzzleFeedback({
         <View
           style={[
             styles.arrowContainer,
-            { left: boardLeft, width: SVG_WIDTH, height: SVG_HEIGHT },
+            { left: boardLeft, top: boardTop, width: SVG_WIDTH, height: SVG_HEIGHT },
           ]}
           pointerEvents="none"
         >

@@ -57,6 +57,7 @@ export function usePuzzle(): UsePuzzleReturn {
 
   const engineRef = useRef<PuzzleEngine | null>(null);
   const solveStartTimeRef = useRef<number | null>(null);
+  const setupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dbInitializedRef = useRef(false);
 
   const updateStatsOnResult = useCallback(async (solved: boolean, currentPuzzle: Puzzle, solveTimeMs: number) => {
@@ -97,6 +98,12 @@ export function usePuzzle(): UsePuzzleReturn {
   }, []);
 
   const loadNextPuzzle = useCallback(async () => {
+    // Cancel any pending setup timer from a previous puzzle
+    if (setupTimerRef.current) {
+      clearTimeout(setupTimerRef.current);
+      setupTimerRef.current = null;
+    }
+
     setPhase('loading');
     setCorrectMove(null);
     setEloDelta(null);
@@ -113,7 +120,13 @@ export function usePuzzle(): UsePuzzleReturn {
     const userRating = parseInt(ratingStr ?? '800', 10);
     const accuracy = await getRecentAccuracy(20);
 
-    const nextPuzzle = await selectNextPuzzle(userRating, accuracy);
+    let nextPuzzle: Puzzle;
+    try {
+      nextPuzzle = await selectNextPuzzle(userRating, accuracy);
+    } catch (e) {
+      console.error('[usePuzzle] Failed to load puzzle:', e);
+      return;
+    }
     setPuzzle(nextPuzzle);
 
     const engine = new PuzzleEngine(nextPuzzle.fen, nextPuzzle.moves);
@@ -124,7 +137,7 @@ export function usePuzzle(): UsePuzzleReturn {
     setPhase('setup-move');
     setBoardFen(engine.getBoardFen());
 
-    setTimeout(() => {
+    setupTimerRef.current = setTimeout(() => {
       engine.applyMove(setup.from, setup.to, setup.promotion);
       setBoardFen(engine.getBoardFen());
       setPhase('player-turn');
