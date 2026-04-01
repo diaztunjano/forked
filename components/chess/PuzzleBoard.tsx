@@ -144,10 +144,14 @@ export default function PuzzleBoard({
           setSelectedSquare(null);
           setLegalMoves([]);
 
+          // Detect pawn promotion: auto-queen (picker UI can be added later)
+          const movesTo = chess.moves({ square: from as Square, verbose: true }).filter((m) => m.to === square);
+          const promotion = movesTo.length > 0 && movesTo[0].promotion ? 'q' : undefined;
+
           // Delay onMove so the 200ms slide animation is visible before parent
           // re-renders the board with the new FEN
           setTimeout(() => {
-            onMove(from, square);
+            onMove(from, square, promotion);
           }, MOVE_ANIMATION_MS);
         } else {
           // Check if tapping another own piece — switch selection

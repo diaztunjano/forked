@@ -6,23 +6,37 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Image as SvgImage } from 'react-native-svg';
 
-// Static map required — Metro bundler does not support dynamic require()
-const PIECE_ASSETS = {
-  wp: require('../../assets/pieces/wp.svg'),
-  bp: require('../../assets/pieces/bp.svg'),
-  wn: require('../../assets/pieces/wn.svg'),
-  bn: require('../../assets/pieces/bn.svg'),
-  wb: require('../../assets/pieces/wb.svg'),
-  bb: require('../../assets/pieces/bb.svg'),
-  wr: require('../../assets/pieces/wr.svg'),
-  br: require('../../assets/pieces/br.svg'),
-  wq: require('../../assets/pieces/wq.svg'),
-  bq: require('../../assets/pieces/bq.svg'),
-  wk: require('../../assets/pieces/wk.svg'),
-  bk: require('../../assets/pieces/bk.svg'),
-} as const;
+// Static imports required — react-native-svg-transformer converts SVGs to React components
+import WpSvg from '../../assets/pieces/wp.svg';
+import BpSvg from '../../assets/pieces/bp.svg';
+import WnSvg from '../../assets/pieces/wn.svg';
+import BnSvg from '../../assets/pieces/bn.svg';
+import WbSvg from '../../assets/pieces/wb.svg';
+import BbSvg from '../../assets/pieces/bb.svg';
+import WrSvg from '../../assets/pieces/wr.svg';
+import BrSvg from '../../assets/pieces/br.svg';
+import WqSvg from '../../assets/pieces/wq.svg';
+import BqSvg from '../../assets/pieces/bq.svg';
+import WkSvg from '../../assets/pieces/wk.svg';
+import BkSvg from '../../assets/pieces/bk.svg';
+
+import type { SvgProps } from 'react-native-svg';
+
+const PIECE_COMPONENTS: Record<string, React.FC<SvgProps>> = {
+  wp: WpSvg,
+  bp: BpSvg,
+  wn: WnSvg,
+  bn: BnSvg,
+  wb: WbSvg,
+  bb: BbSvg,
+  wr: WrSvg,
+  br: BrSvg,
+  wq: WqSvg,
+  bq: BqSvg,
+  wk: WkSvg,
+  bk: BkSvg,
+};
 
 export interface ChessPieceRef {
   animateTo: (toX: number, toY: number) => void;
@@ -69,14 +83,14 @@ const ChessPiece = forwardRef<ChessPieceRef, ChessPieceProps>(
       height: size,
     }));
 
-    const assetKey = `${piece.color}${piece.type}` as keyof typeof PIECE_ASSETS;
-    const source = PIECE_ASSETS[assetKey];
+    const assetKey = `${piece.color}${piece.type}`;
+    const PieceComponent = PIECE_COMPONENTS[assetKey];
+
+    if (!PieceComponent) return null;
 
     return (
       <Animated.View style={animatedStyle}>
-        <Svg width={size} height={size}>
-          <SvgImage href={source} width={size} height={size} />
-        </Svg>
+        <PieceComponent width={size} height={size} />
       </Animated.View>
     );
   }
