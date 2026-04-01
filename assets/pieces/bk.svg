@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+  <!-- cross vertical -->
+  <rect x="21" y="4" width="3" height="13" rx="1" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1"/>
+  <!-- cross horizontal -->
+  <rect x="16" y="7" width="13" height="3" rx="1" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1"/>
+  <!-- crown body -->
+  <path d="M 12,30 L 12,20 C 12,17 17,15 22.5,15 C 28,15 33,17 33,20 L 33,30 Z" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1" stroke-linejoin="round"/>
+  <!-- crown points (3 peaks) -->
+  <path d="M 12,20 L 15,14 L 19,20 L 22.5,13 L 26,20 L 30,14 L 33,20" fill="none" stroke="#E8E8E8" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- base -->
+  <rect x="9" y="30" width="27" height="5" rx="1" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1"/>
+</svg>
