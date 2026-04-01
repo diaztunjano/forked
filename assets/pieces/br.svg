@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+  <!-- tower body with 3 battlements (crenellations) -->
+  <path d="M 11,33 L 11,8 L 16,8 L 16,14 L 20,14 L 20,8 L 25,8 L 25,14 L 29,14 L 29,8 L 34,8 L 34,33 Z" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1" stroke-linejoin="round"/>
+  <!-- base -->
+  <rect x="9" y="33" width="27" height="5" rx="1" fill="#2D2D2D" stroke="#E8E8E8" stroke-width="1"/>
+</svg>

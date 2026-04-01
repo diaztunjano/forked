@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+  <!-- horse head silhouette -->
+  <path d="M 22,10 C 24,8 27,8 28,11 C 30,13 30,17 28,19 C 26,20 25,21 26,23 L 34,23 L 34,33 L 11,33 L 11,28 L 17,23 C 14,21 13,18 14,15 C 15,12 18,10 22,10 Z" fill="#E8E8E8" stroke="#2D2D2D" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- ear -->
+  <path d="M 21,10 L 18,5 L 15,8" fill="none" stroke="#2D2D2D" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- eye -->
+  <circle cx="26" cy="12" r="1.5" fill="#2D2D2D"/>
+  <!-- base -->
+  <rect x="9" y="33" width="27" height="4" rx="1" fill="#E8E8E8" stroke="#2D2D2D" stroke-width="1.5"/>
+</svg>
