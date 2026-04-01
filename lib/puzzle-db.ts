@@ -29,6 +29,30 @@ export interface PuzzleProgress {
   fsrs_last_review_at: number | null;
 }
 
+export interface UserStats {
+  puzzle_rating: number;
+  peak_rating: number;
+  total_solved: number;
+  total_failed: number;
+  current_streak: number;
+  best_streak: number;
+  streak_last_date: string;
+  theme_ratings: Record<string, number>;
+  unlocked_achievements: string[];
+}
+
+const USER_STATS_DEFAULTS: Record<string, string> = {
+  puzzle_rating: '800',
+  peak_rating: '800',
+  total_solved: '0',
+  total_failed: '0',
+  current_streak: '0',
+  best_streak: '0',
+  streak_last_date: '',
+  theme_ratings: '{}',
+  unlocked_achievements: '[]',
+};
+
 let db: SQLite.SQLiteDatabase | null = null;
 
 export function getDatabase(): SQLite.SQLiteDatabase {
@@ -231,6 +255,57 @@ export async function updatePuzzleProgress(
         fsrsCardRow?.fsrs_lapses ?? 0,
         fsrsCardRow?.fsrs_last_review_at ?? null,
       ],
+    );
+  }
+}
+
+export async function getUserStat(key: string): Promise<string | null> {
+  const database = getDatabase();
+  const row = await database.getFirstAsync<{ value: string }>(
+    'SELECT value FROM user_stats WHERE key = ?',
+    [key],
+  );
+  return row?.value ?? null;
+}
+
+export async function setUserStat(key: string, value: string): Promise<void> {
+  const database = getDatabase();
+  await database.runAsync(
+    'INSERT OR REPLACE INTO user_stats (key, value) VALUES (?, ?)',
+    [key, value],
+  );
+}
+
+export async function getUserStats(): Promise<UserStats> {
+  const database = getDatabase();
+  const rows = await database.getAllAsync<{ key: string; value: string }>(
+    'SELECT key, value FROM user_stats',
+  );
+
+  const map = new Map<string, string>();
+  for (const row of rows) {
+    map.set(row.key, row.value);
+  }
+
+  return {
+    puzzle_rating: parseInt(map.get('puzzle_rating') ?? '800', 10),
+    peak_rating: parseInt(map.get('peak_rating') ?? '800', 10),
+    total_solved: parseInt(map.get('total_solved') ?? '0', 10),
+    total_failed: parseInt(map.get('total_failed') ?? '0', 10),
+    current_streak: parseInt(map.get('current_streak') ?? '0', 10),
+    best_streak: parseInt(map.get('best_streak') ?? '0', 10),
+    streak_last_date: map.get('streak_last_date') ?? '',
+    theme_ratings: JSON.parse(map.get('theme_ratings') ?? '{}') as Record<string, number>,
+    unlocked_achievements: JSON.parse(map.get('unlocked_achievements') ?? '[]') as string[],
+  };
+}
+
+export async function initDefaultStats(): Promise<void> {
+  const database = getDatabase();
+  for (const [key, value] of Object.entries(USER_STATS_DEFAULTS)) {
+    await database.runAsync(
+      'INSERT OR IGNORE INTO user_stats (key, value) VALUES (?, ?)',
+      [key, value],
     );
   }
 }
