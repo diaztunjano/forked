@@ -295,8 +295,8 @@ export async function getUserStats(): Promise<UserStats> {
     current_streak: parseInt(map.get('current_streak') ?? '0', 10),
     best_streak: parseInt(map.get('best_streak') ?? '0', 10),
     streak_last_date: map.get('streak_last_date') ?? '',
-    theme_ratings: JSON.parse(map.get('theme_ratings') ?? '{}') as Record<string, number>,
-    unlocked_achievements: JSON.parse(map.get('unlocked_achievements') ?? '[]') as string[],
+    theme_ratings: (() => { try { return JSON.parse(map.get('theme_ratings') ?? '{}'); } catch { return {}; } })() as Record<string, number>,
+    unlocked_achievements: (() => { try { return JSON.parse(map.get('unlocked_achievements') ?? '[]'); } catch { return []; } })() as string[],
   };
 }
 
