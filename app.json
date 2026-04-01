@@ -31,7 +31,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      ["expo-sqlite", { "importedDatabase": "./assets/puzzles.db" }]
     ],
     "experiments": {
       "typedRoutes": true
